@@ -78,7 +78,7 @@ def main():
         split_path = Path(split_path)
         splits = data_helper.load_yaml(split_path)
 
-        stats = data_helper.AverageMeter('fscore', 'diversity')
+        # stats = data_helper.AverageMeter('fscore', 'diversity')
 
         for split_idx, split in enumerate(splits): #different split section in each yml file (0~4)-> 5 section
             ckpt_path = data_helper.get_ckpt_path(args.model_dir, split_path, split_idx)
@@ -93,6 +93,7 @@ def main():
             # return 
             # fscore, diversity, pred_li = evaluate(model, val_loader, args.nms_thresh, args.device)
             pred_li = evaluate(model, val_loader, args.nms_thresh, args.device)
+            
         #     stats.update(fscore=fscore, diversity=diversity)
 
         #     logger.info(f'{split_path.stem} split {split_idx}: diversity: '
@@ -132,33 +133,35 @@ def main():
     
     # # h5out.close()
     # print('Final Mapping:',dic)
+    for file_name in pred_li:
 
-    pred_summ = pred_li['walk_3']
-    cap = cv2.VideoCapture('../mydatasets/myvideo/walk_3.mp4')
-    width  = int(cap.get(3))
-    height = int(cap.get(4))
-    fps = int(cap.get(5))
-    size = (width, height)
-    fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    output_name =  'walk_3_SUMMARY_OUTPUT'+'.avi'
-    output_path = os.path.join('../output/', output_name)
-    out = cv2.VideoWriter(output_path, fourcc, fps, size)
-    count = 0
-    while(cap.isOpened()):
-        ret, frame = cap.read()
-        if ret == True:
-            # 寫入影格
-            if pred_summ[count]:
-                out.write(frame)
-            count+=1
-                # cv2.imshow('frame',frame)
-                # if cv2.waitKey(1) & 0xFF == ord('q'):
-                #     break
-        else:
-            break
-    cap.release()
-    out.release()
-    cv2.destroyAllWindows()
+        pred_summ = pred_li[file_name]
+        cap = cv2.VideoCapture(os.path.join('../mydatasets/video/', file_name+'.mp4'))
+        # cap = cv2.VideoCapture('../mydatasets/myvideo/walk_3.mp4')
+        width  = int(cap.get(3))
+        height = int(cap.get(4))
+        fps = int(cap.get(5))
+        size = (width, height)
+        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        output_name =  file_name+'_SUMMARY_OUTPUT'+'.avi'
+        output_path = os.path.join('../output/', output_name)
+        out = cv2.VideoWriter(output_path, fourcc, fps, size)
+        count = 0
+        while(cap.isOpened()):
+            ret, frame = cap.read()
+            if ret == True:
+                # 寫入影格
+                if pred_summ[count]:
+                    out.write(frame)
+                count+=1
+                    # cv2.imshow('frame',frame)
+                    # if cv2.waitKey(1) & 0xFF == ord('q'):
+                    #     break
+            else:
+                break
+        cap.release()
+        out.release()
+        cv2.destroyAllWindows()
 
     # ## Step 2: Generating Summary Video
     # for index in dic:
