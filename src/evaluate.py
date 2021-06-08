@@ -1,13 +1,13 @@
 ####################################
-# This file contains funtions:
-#     1. main(None)-> None 
-#     2. evaluate(model, video data, other parameter)-> prediction result
-#     whole file:
-#         Input: 
-#             1. the h5 file (which contains many videos info)
-#             2. original video path
-#         Ouptut: 
-#             1. summary video
+## This file contains funtions:
+##     1. main(None)-> None 
+##     2. evaluate(model, video data, other parameter)-> prediction result
+##     whole file:
+##         Input: 
+##             1. the h5 file (which contains many videos info)
+##             2. original video path
+##         Ouptut: 
+##             1. summary video
 ######################################
 
 import logging
@@ -79,22 +79,27 @@ def evaluate(model, val_loader, nms_thresh, device):
 
 
 def main():
+    #load model argument
     args = init_helper.get_arguments()
-
-    init_helper.init_logger(args.model_dir, args.log_file)
+    init_helper.init_logger(args.model_dir, args.log_file) #arg.model_dir = ../models/pretrain_ab_basic
     init_helper.set_random_seed(args.seed)
-
     logger.info(vars(args))
-    model = get_model(args.model, **vars(args))
+    model = get_model(args.model, **vars(args)) 
     model = model.eval().to(args.device)
+
+    #load h5 data
+    # h5in = h5py.File(args.input_data, 'r')
+
     for split_path in args.splits: #different yml file
-        split_path = Path(split_path)
+        split_path = Path(split_path) #ex: ../splits/summe.yml
         splits = data_helper.load_yaml(split_path)
 
         # stats = data_helper.AverageMeter('fscore', 'diversity')
 
-        for split_idx, split in enumerate(splits): #different split section in each yml file (0~4)-> 5 section
-            ckpt_path = data_helper.get_ckpt_path(args.model_dir, split_path, split_idx)
+        for split_idx, split in enumerate(splits): #different split section in each yml file (0~4)-> 5 section 
+            ckpt_path = data_helper.get_ckpt_path(args.model_dir, split_path, split_idx) #ckpt_path = '../models/pretrain_ab_basic/checkpoint/summe.yml.0.pt'
+            print(ckpt_path)
+            return
             state_dict = torch.load(str(ckpt_path),
                                     map_location=lambda storage, loc: storage)
             model.load_state_dict(state_dict)

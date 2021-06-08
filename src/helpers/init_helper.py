@@ -39,7 +39,7 @@ def get_parser() -> argparse.ArgumentParser:
     parser.add_argument('--device', type=str, default='cuda',
                         choices=('cuda', 'cpu'))
     parser.add_argument('--seed', type=int, default=12345)
-    parser.add_argument('--splits', type=str, nargs='+', required=True)
+    # parser.add_argument('--splits', type=str, nargs='+', required=True)
     parser.add_argument('--max-epoch', type=int, default=300)
     parser.add_argument('--model-dir', type=str, default='../models/model')
     parser.add_argument('--log-file', type=str, default='log.txt')
@@ -71,6 +71,12 @@ def get_parser() -> argparse.ArgumentParser:
                         choices=['focal', 'cross-entropy'])
     parser.add_argument('--reg-loss', type=str, default='soft-iou',
                         choices=['soft-iou', 'smooth-l1'])
+
+    # data resource I/O
+    parser.add_argument('--input_data', type=str, default='../mydatasets/vsumm_custom_after_kts.h5')
+    parser.add_argument('--output_folder', type=str, default='../output/')
+    parser.add_argument('--model_path', type=str, default='../models/pretrain_ab_basic/checkpoint/summe.yml.4.pt')
+    parser.add_argument('--input_video', type=str, default='../mydatasets/video/')
 
     return parser
 
