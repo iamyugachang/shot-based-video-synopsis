@@ -1,3 +1,15 @@
+####################################
+# This file contains funtions:
+#     1. main(None)-> None 
+#     2. evaluate(model, video data, other parameter)-> prediction result
+#     whole file:
+#         Input: 
+#             1. the h5 file (which contains many videos info)
+#             2. original video path
+#         Ouptut: 
+#             1. summary video
+######################################
+
 import logging
 from pathlib import Path
 
@@ -10,6 +22,7 @@ import cv2
 import os
 import h5py
 from collections import Counter 
+from tqdm import tqdm
 logger = logging.getLogger()
 
 
@@ -102,6 +115,8 @@ def main():
         # logger.info(f'{split_path.stem}: diversity: {stats.diversity:.4f}, '
         #             f'F-score: {stats.fscore:.4f}')
     print('Length of prediction of all video:', len(pred_li))
+    # for key in pred_li:
+    #     print('length:', len(pred_li[key]))
     ## Start processing summary video
 
     # ## Step 1. Build mapping of original videos and summary feature in h5
@@ -142,18 +157,22 @@ def main():
         height = int(cap.get(4))
         fps = int(cap.get(5))
         size = (width, height)
-        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        fourcc = cv2.VideoWriter_fourcc(*'XVID') #for avi extension
+        # fourcc = cv2.VideoWriter_fourcc(*'MP4V')
+        # fourcc = cv2.VideoWriter_fourcc('M','P','E','G')
         output_name =  file_name+'_SUMMARY_OUTPUT'+'.avi'
         output_path = os.path.join('../output/', output_name)
         out = cv2.VideoWriter(output_path, fourcc, fps, size)
         count = 0
-        while(cap.isOpened()):
+        print('Generating summary videos', output_path, 'from', os.path.join('../mydatasets/video/', file_name+'.mp4'))
+        for count in tqdm(range(len(pred_summ))):
+        # while(cap.isOpened()):
             ret, frame = cap.read()
             if ret == True:
                 # 寫入影格
                 if pred_summ[count]:
                     out.write(frame)
-                count+=1
+                # count+=1
                     # cv2.imshow('frame',frame)
                     # if cv2.waitKey(1) & 0xFF == ord('q'):
                     #     break

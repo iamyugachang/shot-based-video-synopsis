@@ -37,4 +37,4 @@ def create_h5(dataset_path, h5_file_name, pick_gap):
     f.close()
 
 if __name__== '__main__':
-    create_h5('../mydatasets/video', '../mydatasets/vsumm_custom.h5', 15)
+    create_h5('../mydatasets/video', '../mydatasets/vsumm_custom.h5', 10)
