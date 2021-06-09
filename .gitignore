@@ -20,4 +20,5 @@ tests/
 splits/
 mydatasets/
 docs/
+.gitignore
 
