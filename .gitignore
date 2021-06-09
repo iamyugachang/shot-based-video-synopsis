@@ -19,6 +19,5 @@ video/
 tests/
 splits/
 mydatasets/
-docs/
 .gitignore
 

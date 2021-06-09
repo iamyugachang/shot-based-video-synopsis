@@ -1,8 +1,8 @@
 This is a modified version of implementing video summarization on custom data.
-For basic establishment (eg. pretrain-model, TVSUMM & SUMME datasets, etc), please refer to the source: source: https://github.com/li-plus/DSNet
+For basic establishment (eg. pretrain-model, TVSUMM & SUMME datasets, etc), please refer to the DSNet source: https://github.com/li-plus/DSNet
 
 ## File structure 
-The file structure demonstrated below is an example of my establishment.
+The file structure demonstrated below is an example of my arrangement.
 I put custom videos in `mydatasets/video/`, and the generated h5 file in `mydatasets/`.
 ```
 shot-based-video-synopsis
