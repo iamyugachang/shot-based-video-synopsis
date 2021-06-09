@@ -73,10 +73,10 @@ def get_parser() -> argparse.ArgumentParser:
                         choices=['soft-iou', 'smooth-l1'])
 
     # data resource I/O
-    parser.add_argument('--input_data', type=str, default='../mydatasets/vsumm_custom_after_kts.h5')
-    parser.add_argument('--output_folder', type=str, default='../output/')
-    parser.add_argument('--model_path', type=str, default='../models/pretrain_ab_basic/checkpoint/summe.yml.4.pt')
-    parser.add_argument('--input_video', type=str, default='../mydatasets/video/')
+    parser.add_argument('--input-data', type=str, default='../mydatasets/vsumm_custom_after_kts.h5')
+    parser.add_argument('--output-folder', type=str, default='../output/')
+    parser.add_argument('--model-path', type=str, default='../models/pretrain_ab_basic/checkpoint/summe.yml.4.pt')
+    parser.add_argument('--input-video', type=str, default='../mydatasets/video/')
 
     return parser
 
