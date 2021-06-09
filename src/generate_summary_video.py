@@ -1,16 +1,4 @@
 import os
-####################################
-## This file contains funtions:
-##     1. main(None)-> None 
-##     2. evaluate(model, video data, other parameter)-> prediction result
-##     whole file:
-##         Input: 
-##             1. the h5 file (which contains many videos info)
-##             2. original video path
-##         Ouptut: 
-##             1. summary video
-######################################
-
 import logging
 from pathlib import Path
 
@@ -34,12 +22,27 @@ def evaluate(model, val_loader, nms_thresh, device):
         for val in val_loader:
             # Read h5 file and collect all parameters
             test_key, seq, _, cps, n_frames, nfps, picks,_ = val  
+            # Parameted description:
+            # test_key      -> path of the video                    -> ex: 
+            # seq           -> feature (length = n_frames/15)       -> ex: length = 3284/15 = 219
+            # cps           -> change points(frame positions)       -> ex: [(0,74), (75,164), (165,209)]
+            # n_frames      -> total number of frames in the video  -> ex: 3284
+            # nfps          -> number of frames per segment         -> ex: [75, 90, 45,...]
+            # picks         ->                                      -> ex: [0,15,30,45,60,...] 
+            # _             -> user_summary in the original h5             
+            
             seq_len = len(seq) #length of features extracted from googlenet (shape = (n_frames/subsample_amount, 1024))
             seq_torch = torch.from_numpy(seq).unsqueeze(0).to(device)   
 
             # Predict confidence of classes and bbox position         
             pred_cls, pred_bboxes = model.predict(seq_torch)
-            pred_bboxes = np.clip(pred_bboxes, 0, seq_len).round().astype(np.int32) #transform all elements in bboxes to range in (0, len(seq)), 
+            # pred_cls      -> [    score1    ,     score2   ,...]  -> [ 0.4  ,   0.6  , ...]
+            # pred_bboxs    -> [(pos11, pos12),(pos21, pos22),...]  -> [(0, 2), (-2, 3), ...] (length of pred_bboxs = len(seq)*4)
+
+            pred_bboxes = np.clip(pred_bboxes, 0, seq_len).round().astype(np.int32) #transform all elements in bboxes to range in (0, len(seq))
+            # pred_cls      -> [    score1    ,     score2   ,...]  -> [ 0.4  ,  0.6  , ...]
+            # pred_bboxs    -> [(pos11, pos12),(pos21, pos22),...]  -> [(0, 2), (0, 3), ...]
+             
             pred_cls, pred_bboxes = bbox_helper.nms(pred_cls, pred_bboxes, nms_thresh) #filter score larger than nms_thresh in cls & bboxes
             pred_summ = vsumm_helper.bbox2summary(
                 seq_len, pred_cls, pred_bboxes, cps, n_frames, nfps, picks)
@@ -87,7 +90,6 @@ def main(version):
     for file_name in pred_li:
         pred_summ = pred_li[file_name]
         cap = cv2.VideoCapture(os.path.join(args.input_video, video_map[file_name]))
-        # cap = cv2.VideoCapture('../mydatasets/myvideo/walk_3.mp4')
         width  = int(cap.get(3))
         height = int(cap.get(4))
         fps = int(cap.get(5))
@@ -101,16 +103,11 @@ def main(version):
         count = 0
         print('Generating summary videos', output_path, 'from', os.path.join(args.input_video, video_map[file_name]))
         for count in tqdm(range(len(pred_summ))):
-        # while(cap.isOpened()):
             ret, frame = cap.read()
             if ret == True:
-                # 寫入影格
+                # Write frame if the selected-score of frame[count] == 1
                 if pred_summ[count]:
                     out.write(frame)
-                # count+=1
-                    # cv2.imshow('frame',frame)
-                    # if cv2.waitKey(1) & 0xFF == ord('q'):
-                    #     break
             else:
                 break
         cap.release()
@@ -122,5 +119,5 @@ if __name__ == '__main__':
     # create h5 file (add feature)
     # create shot file (add change_points, n_frame_per_segment)
     # create video file (send h5 file with all data into evaluate)
-    main(version='folder') #version = split or folder
+    main(version='folder') #version = split or folder -> to be continued
     pass

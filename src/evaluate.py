@@ -1,15 +1,3 @@
-####################################
-## This file contains funtions:
-##     1. main(None)-> None 
-##     2. evaluate(model, video data, other parameter)-> prediction result
-##     whole file:
-##         Input: 
-##             1. the h5 file (which contains many videos info)
-##             2. original video path
-##         Ouptut: 
-##             1. summary video
-######################################
-
 import logging
 from pathlib import Path
 
@@ -98,13 +86,11 @@ def main():
 
         for split_idx, split in enumerate(splits): #different split section in each yml file (0~4)-> 5 section 
             ckpt_path = data_helper.get_ckpt_path(args.model_dir, split_path, split_idx) #ckpt_path = '../models/pretrain_ab_basic/checkpoint/summe.yml.0.pt'
-            print(ckpt_path)
-            return
             state_dict = torch.load(str(ckpt_path),
                                     map_location=lambda storage, loc: storage)
             model.load_state_dict(state_dict)
             ## split = ['test_keys', [video1, video2.....]]
-            val_set = data_helper.VideoDataset(split['test_keys'])  #all videos in ith split 
+            val_set = data_helper.VideoDataset(split['test_keys'])  #all videos in ith split #split['test_keys'] = all path in h5 file without '.h5'
             val_loader = data_helper.DataLoader(val_set, shuffle=False) # val_set = ..videoDataset([path1, path2, path3....])
             # for picks in val_loader:
             #     print(picks)
