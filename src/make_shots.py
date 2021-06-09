@@ -1,8 +1,6 @@
 import argparse
 import h5py
 import numpy as np
-import os
-import math
 from kts.cpd_auto import cpd_auto
 
 def make_shots(h5in, h5out, subsample_size):

@@ -1,16 +1,12 @@
 import os
 import logging
-from pathlib import Path
-
 import numpy as np
 import torch
-
 from helpers import init_helper, data_helper, vsumm_helper, bbox_helper
 from modules.model_zoo import get_model
 import cv2
 import os
 import h5py
-from collections import Counter 
 from tqdm import tqdm
 logger = logging.getLogger()
 
@@ -120,4 +116,4 @@ if __name__ == '__main__':
     # create shot file (add change_points, n_frame_per_segment)
     # create video file (send h5 file with all data into evaluate)
     main(version='folder') #version = split or folder -> to be continued
-    pass
+    
